@@ -12,21 +12,18 @@ var Drag = function(obj){
             if(ev.button !=0){
                 return; //屏蔽左键以外的按键
             }
-            
+            //el.classList.add("active");
             var x = ev.clientX;
             var y = ev.clientY;
 
             var l = el.offsetLeft;
             var t = el.offsetTop;
-            //console.log('zhuiming-onBegin:x=',x,",y=",y,"l=",l,'t=',t);
 
             if(obj && obj.onBegin){
                 obj.onBegin.call(el, {
                     left: x - l,
                     top: y - t
                 })
-                /*el.style.left = x + 'px';
-                el.style.top = y + 'px';*/
             }
             var isDown = true;
             el.style.cursor = 'move';
@@ -37,14 +34,13 @@ var Drag = function(obj){
                 if(!isDown) return;
                 var nx = ev.clientX;
                 var ny = ev.clientY;
-                //console.log('zhuiming-nx=', nx, "ny=", ny);
+
                 //计算移动后的左偏移量和上偏移量
                 nl = nx - (x - l);
                 nt = ny - (y - t);
 
                 el.style.left = nl + 'px';
                 el.style.top = nt + 'px';
-                //console.log('zhuiming-el-begin:', el);
                 
 
                 if(obj && obj.onDrag){
@@ -55,16 +51,7 @@ var Drag = function(obj){
                         y: ny - y
                         /*position: 'absolute'*/
                     })
-                    /*
-                    var imgChild = el.children[0].firstElementChild;
-                    /*el.style.left = nx + 'px';
-                    el.style.top = ny + 'px';
-                    el.style.width = 50 +'px';
-                    el.style.height = 30 + 'px';
-                    imgChild.style.position = 'absolute';
-                    imgChild.style.left = nx + 'px';
-                    imgChild.style.top = ny + 'px';*/
-                    console.log('zhuiming-el-children:', el.children[0].firstElementChild);
+                    
                 }
                 
                 return false;
@@ -75,13 +62,11 @@ var Drag = function(obj){
                 el.style.cursor = 'default';
 
                 if(obj && obj.onEnd) {
+                    //el.classList.remove("active");
                     obj.onEnd.call(el, {
                         left: nl,
                         top: nt
                     })
-                    /*el.style.left = ev.clientX + 'px';
-                    el.style.top = ev.clientY+ 'px';
-                    console.log('zhuiming-onEnd:el=', el);*/
                 }
                 return false;
             }

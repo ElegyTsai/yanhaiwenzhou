@@ -1,7 +1,7 @@
 <template>
     <div class="paintTool">
         <ul>
-            <li v-for="(item, index) in paintTool" :key="index">
+            <li v-for="(item, index) in paintTool" :key="index" @click="selectTool(index)">
                 <el-tooltip class="item" effect="dark" :content="paintTool[index]" placement="right">
                     <img :src="require('@/assets/paintTool/'+paintTool[index]+'.png')" >
                 </el-tooltip>
@@ -11,6 +11,7 @@
 </template>
 <script>
 import paintTool from '../js/paintTool'
+import {mapState} from 'vuex'
 export default paintTool
 </script>
 
@@ -29,11 +30,11 @@ export default paintTool
     padding-inline-end: 5px;
 }
 
-li{
+.paintTool li{
     list-style-type: none;
     margin-top:5px ;
 }
-li img{
+.paintTool li img{
     width: 25px;
     height: 25px;
 }

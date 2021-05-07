@@ -29,9 +29,10 @@ export default fileTool
 }
 .fileTool ul li{
     float: left;
+    list-style-type: none;
     margin-left: 10px;
 }
-li img{
+.fileTool li img{
     width: 25px;
     height: 25px;
 }

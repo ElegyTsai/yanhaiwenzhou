@@ -1,7 +1,11 @@
 //注册组件
 //注册指令
+
+//import { Resize } from './resize';
+
 //function componentInit(){
 var Drag = require('./drag')
+var Resize = require('./resize')
 
 
 export default (Vue) => {
@@ -9,15 +13,15 @@ export default (Vue) => {
     props: ['obj'],
     data: function () {
       var obj = this.obj;
-
       var mappers = {
         numbers: ['left', 'top', 'width', 'height'],
-        strings: ['active']
+        strings: ['active', 'transform', 'visibility']
       }
       return {
         data: obj,
         style() {
           var json = {};
+          //console.log('zhuiming-obj', obj);
           for(var key in obj){
             var value = obj[key];
              
@@ -29,7 +33,9 @@ export default (Vue) => {
               if(isNumber) {
                 value = value + 'px';
               }
-
+              if(key=='transform'){
+                value = 'rotate(' + value +'deg)';
+              }
               json[key] = value;
             }
           }
@@ -37,16 +43,18 @@ export default (Vue) => {
         }
       }
     },
-    template: '<div :class="{obj:true, active:data.active}" :style="style()"><div calss="image"><img :src="data.value"></div></div>'
+    template: '<div :class="{obj:true, active:data.active}" :style="style()"><div class="image"><img :src="data.value"></div></div>'
   });
 
   Vue.directive('drag', {
     inserted(dv, binding) {
+      //注册拖拽移动
       var drag = new Drag.Drag({
         onBegin: function (data) {
 
-          var id = parseInt(dv.getAttribute('data-id'));
+          //var id = parseInt(dv.getAttribute('data-id'));
           var self = {}
+          //for(var i=0; i<objs.length; i++){
           for(var i=0; i<objs.length; i++){
             var item = objs[i];
             if(item.active){
@@ -63,7 +71,7 @@ export default (Vue) => {
               item.oldTop = item.top;
             }
           })
-          console.log('zhuiming-dragonBegin');
+          //console.log('zhuiming-dragonBegin');
         },
         onDrag: function (data) {
           var obj = binding.value.obj;
@@ -80,7 +88,7 @@ export default (Vue) => {
         
             }
           })
-          console.log('zhuiming-dragonDrag')
+          //console.log('zhuiming-dragonDrag')
         },
         onEnd: function (data) {
           objs.forEach(item => {
@@ -89,10 +97,20 @@ export default (Vue) => {
               item.oldTop = item.top;
             }
           })
-          console.log('zhuiming-dragonEnd')
+          //console.log('zhuiming-dragonEnd')
         }
       })
       drag.register(dv);
+
+      //注册拖债拉伸
+      var resize = new Resize.Resize({
+        onResize: function (data){
+          for(var key in data) {
+            binding.value.obj[key] = data[key];
+          }
+        }
+      });
+      resize.register(dv);
     }
   })
 }
