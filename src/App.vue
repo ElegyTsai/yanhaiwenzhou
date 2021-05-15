@@ -91,6 +91,8 @@ export default {
 .bar{
   background-color: black;
   margin: 0px;
+  height: 70px;
+  padding-left: 50px;
   padding-bottom: 10px;
 
 }
@@ -105,7 +107,7 @@ export default {
   display: inline-block;
   max-width: 100px;
   margin-right: 50px;
-  margin-bottom: 20px;
+  margin-bottom: 60px;
 }
 
 .bar .el-tabs {

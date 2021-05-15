@@ -9,7 +9,14 @@ const store = new Vuex.Store({
         selected: {},
         isSelected: false,
         tools: tools,
-        toolId: 1
+        toolId: 1,
+        bgcolor:'rgba(19, 206, 102, 0.8)',
+        bgwidth: 600,
+        bgheight: 600,
+        zIndex: 1,
+        activeTemplate: false,
+        elementCount: 0
+
     },
     mutations: {
         pushObj (state, obj){
@@ -24,6 +31,24 @@ const store = new Vuex.Store({
         },
         changeToolId (state, index){
             state.toolId = index;
+        },
+        changeBgColor (state, bgcolor){
+            state.bgcolor = bgcolor;
+        },
+        changeBgWidth (state, bgwidth){
+            state.bgwidth = bgwidth;
+        },
+        changeBgHeight (state, bgheight){
+            state.bgheight = bgheight;
+        },
+        addZIndex(state, zIndex){
+            state.zIndex = zIndex;
+        },
+        changeActiveTemplate(state, activeTemplate){
+            state.activeTemplate = activeTemplate;
+        },
+        changeElementCount(state, elementCount){
+            state.elementCount = elementCount;
         }
     }
 })

@@ -357,7 +357,7 @@ footer section>ul li ul li h2{
     height: 500px;
 }
 .myslide img{
-    max-height: 200px;
+    max-height: 500px;
 }
 .el-carousel__item h3 {
     color: #475669;

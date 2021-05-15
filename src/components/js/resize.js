@@ -56,6 +56,7 @@ var Resize = function (options) { //options表示当前操作
                 }
 
                 if(options && options.onBegin){
+                    console.log('zhuiming-resize-begin');
                     options.onBegin.call(el, data);
                 }
 

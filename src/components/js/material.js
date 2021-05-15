@@ -2,6 +2,13 @@ export default {
     data () {
         return {
             imgTool:[
+                {url: require('@/assets/material/nangua/a1.png')},
+                {url: require('@/assets/material/nangua/a2.png')},
+                {url: require('@/assets/material/nangua/a3.png')},
+                {url: require('@/assets/material/nangua/b1.png')},
+                {url: require('@/assets/material/nangua/b2.png')},
+                {url: require('@/assets/material/nangua/c1.png')},
+                {url: require('@/assets/material/nangua/d1.png')},
                 {url: require('@/assets/material/鸟1.png')},
                 {url: require('@/assets/material/鸟2.png')},
                 {url: require('@/assets/material/鸟3.png')},
@@ -22,16 +29,25 @@ export default {
                 {url: require('@/assets/img2.png')},
                 {url: require('@/assets/img3.png')}*/
             ],
+
         }
         
     },
     computed: {
-
+        activeTemplate: function () {
+            return this.$store.state.activeTemplate;
+        }
     },
     methods: {
         tAddObj(url, x, y){
-            addObj(url, x, y);
-        }
+            if(this.activeTemplate==false){
+                addObj(url, x, y);
+            }else{
+                addTemplate(url);
+            }
+            
+        },
+        
 
     }
 }

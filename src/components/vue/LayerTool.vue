@@ -1,13 +1,20 @@
 <template>
     <div class="layertool">
         <div class="title">{{title}}</div>
+        
         <div class="layer" id='layer'>
             <ul>
-                <li :class="{'selected':activeLi.indexOf(index)>-1}" class="layeritem" v-for="(item, index) in layers" :key="index" @click.prevent="pinSelect($event, index)" ref="list">
+                <li :class="{'selected':activeLi.indexOf(index)>-1}" class="layeritem" v-for="(item, index) in layers" :key="index" @contextmenu.prevent.stop="rightClick(item,$event)" @click.prevent="pinSelect($event, index)" ref="list">
                     <i class="el-icon-view" @click="handleClick(index)"></i>
                     <img :src="item.value"/>
                     <span>图层{{index}}</span>
                 </li>
+            </ul>
+        </div>
+        <div id="layerfun">
+            <ul>
+                <li @click="mergeLayer()"><span>合并图层</span></li>
+                <li @clicek="deleteLayer()"><span>删除图层</span></li>
             </ul>
         </div>
     </div>
@@ -22,7 +29,8 @@ export default {
             pin: false,//shift键是否被按下
             ctrl: false, //ctrl是否被按下
             origin: -1, //记录按下的起始点
-            activeLi: []
+            activeLi: [],
+            rClick: false,
         }
     },
     computed: {
@@ -53,22 +61,74 @@ export default {
                 console.log('ctrl is up')
                 this.ctrl = false;
             }
+        });
+        //监听是否点击在图层控制区域
+        window.addEventListener('mousedown', ev=>{
+            //console.log('window.ev:', ev);
+            var e = ev || window.event;
+            var elem = e.target;
+            var targetArea = document.getElementById('layerfun');
+            if(!targetArea.contains(elem)){
+                targetArea.style.display = 'none';
+            }
         })
+        
     },
     methods: {
+        mergeLayer(){
+            var layers = document.querySelectorAll(".layer .selected");
+            console.log('layers:', layers) 
+            console.log('activeLi:', this.activeLi)
+            var len = this.activeLi.length;
+            var nowDom = document.getElementById('sketchpad');
+            var tempIndex = nowDom.getElementsByClassName('obj')[this.activeLi[0]].style.zIndex;
+            var minLeft = 1e9;
+            var minTop = 1e9;
+            var maxRight = 0;
+            var maxBottom = 0;
+            for(var i=0; i<len; i++){
+                nowDom.getElementsByClassName('obj')[this.activeLi[i]].style.zIndex=tempIndex;
+                /*var nowchild = nowDom.getElementsByClassName('obj')[this.activeLi[i]];
+                //console.log('zhuiming-nowchild:', nowchild.offsetWidth);
+                //console.log('zhuiming-width:', nowchild.style.width,', height:', nowchild.style.height)
+                minLeft = Math.min(nowchild.offsetLeft, minLeft);
+                minTop = Math.min(nowchild.offsetTop, minTop);
+                maxRight = Math.max(nowchild.offsetLeft+nowchild.offsetWidth, maxRight);
+                maxBottom = Math.max(nowchild.offsetTop+ nowchild.offsetHeight, maxBottom);
+                console.log('zhuiming-minLeft:', minLeft, ',minTop:', minTop);
+                console.log('zhuiming-maxRight:', maxRight, ',maxBottom:', maxBottom);
+                var childs = nowchild.childNodes;
+                for(var j = childs.length - 1; j >= 1; j--) { 
+                    //alert(childs[i].nodeName); 
+                    nowchild.removeChild(childs[j]); 
+                }*/
+                
+            }
+        },
+        deleteLayer(){
+
+        },
+        rightClick(item, ev){
+            var res = document.getElementById('layerfun');      //找到id为box的div
+            console.log('ev:', ev);
+            //console.log('ev.clientX:', ev.clientX,'ev.clientY:', ev.clientY)
+            res.style.top = ev.y+80+'px';     //鼠标点击时给div定位Y轴
+            res.style.left = ev.x+'px';    //鼠标点击时给div定位X轴
+            res.style.display = 'block';        //显示div盒子
+        },
         handleClick (index){
             this.isVisible = !this.isVisible;
             var nowDom = document.getElementById('layer');
             if(this.isVisible==false){
                 this.layers[index].visibility = 'hidden';
                 nowDom.getElementsByTagName('i')[index].className='noshow';
-                //this.$strore.se
             }else{
                 this.layers[index].visibility = 'visible';
                 nowDom.getElementsByTagName('i')[index].className='el-icon-view';
             }
         },
         pinSelect(ev, index){
+            
             ev.preventDefault();
             ev.stopPropagation();
             if(this.origin==-1){
@@ -122,6 +182,22 @@ export default {
 </script>
 
 <style>
+.layertool #layerfun{
+    position: absolute;;
+    display: none;
+    z-index: 2;
+    background: burlywood;
+    width: 80px;
+
+}
+.layertool #layerfun ul{
+    list-style-type: none;
+    font-size: .8em;
+}
+.layertool #layerfun ul li{
+    padding: .2em;
+    border-bottom: black ;
+}
 .layertool {
     border: red solid 1px;
     height: 400px;
@@ -137,7 +213,7 @@ export default {
     margin-inline-start: 0px;
     margin-inline-end: 0px;
     padding-inline-start: 0px;
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     margin: 5px;
 
 }
@@ -164,8 +240,8 @@ export default {
 }
 .layertool .noshow{
     border: 1px red solid;
-    height: 16px;
-    width: 16px;
+    height: 24px;
+    width: 24px;
     /*visibility: hidden;*/
     /*background: coral;*/
     font-style: normal;
@@ -176,5 +252,14 @@ export default {
     width: 30px;
     height: 30px;
 }
+/*.layertool .layer .noshow{
+    display: none;
+    
+}
+.layertool .layer .rightClick{
+    list-style-type: none;
+    display: block;
+    position: relative;
+}*/
 
 </style>

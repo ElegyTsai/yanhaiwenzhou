@@ -15,7 +15,7 @@ export default (Vue) => {
       var obj = this.obj;
       var mappers = {
         numbers: ['left', 'top', 'width', 'height'],
-        strings: ['active', 'transform', 'visibility']
+        strings: ['active', 'transform', 'visibility','zIndex']
       }
       return {
         data: obj,
@@ -23,6 +23,7 @@ export default (Vue) => {
           var json = {};
           //console.log('zhuiming-obj', obj);
           for(var key in obj){
+            //console.log('key:', key);
             var value = obj[key];
              
             var isNumber = mappers.numbers.indexOf(key) != -1;
@@ -36,9 +37,15 @@ export default (Vue) => {
               if(key=='transform'){
                 value = 'rotate(' + value +'deg)';
               }
+              if(key=='zIndex'){
+                key = 'z-index';
+              }
               json[key] = value;
+              
+              //console.log('key:', key);
             }
           }
+          //console.log('json:', json);
           return json;
         }
       }
@@ -54,19 +61,35 @@ export default (Vue) => {
 
           //var id = parseInt(dv.getAttribute('data-id'));
           var self = {}
+          //console.log('app.objs:', app.objs);
+
           //for(var i=0; i<objs.length; i++){
           for(var i=0; i<objs.length; i++){
             var item = objs[i];
+            //console.log('67-item:',item);
             if(item.active){
               self = item;
               break;
             }
           }
           self.active = true;
+          /*再次循环找出当前层所有对象 */
+          for(var i=0; i<objs.length; i++){
+            var nowDom = document.getElementById('sketchpad');
+            var tempIndex = nowDom.getElementsByClassName('obj')[i].style.zIndex;
+            objs[i].zIndex = tempIndex;
+            //console.log('obj-',i, 'z-index',objs[i].zIndex);
+            if(objs[i].zIndex==self.zIndex){
+              objs[i].active = true;
+            }
+          }
+          
 
           //选中的记录旧坐标
           objs.forEach(item => {
+            
             if(item.active){
+              //console.log('85-item.active:',item)
               item.oldLeft = item.left;
               item.oldTop = item.top;
             }
@@ -81,7 +104,8 @@ export default (Vue) => {
 
           //所有选中的移动，不包括当前（？？）
           objs.forEach(item => {
-            if(item.active && item == obj){
+            if(item.active && item != obj){
+            //if(item.active){
               item.left = data.x + item.oldLeft;
               item.top = data.y + item.oldTop;
               //console.log('zhuiming-item.value:',item.value,';item.left=:', item.left,";item.top=", item.top);
@@ -104,10 +128,44 @@ export default (Vue) => {
 
       //注册拖债拉伸
       var resize = new Resize.Resize({
-        onResize: function (data){
-          for(var key in data) {
-            binding.value.obj[key] = data[key];
+        onBegin: function(data){
+          var self = {}
+          //console.log('app.objs:', app.objs);
+
+          //for(var i=0; i<objs.length; i++){
+          for(var i=0; i<objs.length; i++){
+            var item = objs[i];
+            //console.log('67-item:',item);
+            if(item.active){
+              self = item;
+              break;
+            }
           }
+          self.active = true;
+          /*再次循环找出当前层所有对象 */
+          for(var i=0; i<objs.length; i++){
+            var nowDom = document.getElementById('sketchpad');
+            var tempIndex = nowDom.getElementsByClassName('obj')[i].style.zIndex;
+            objs[i].zIndex = tempIndex;
+            //console.log('obj-',i, 'z-index',objs[i].zIndex);
+            if(objs[i].zIndex==self.zIndex){
+              objs[i].active = true;
+            }
+          }
+        },
+        onResize: function (data){
+          objs.forEach(item=>{
+            if(item.active){
+              //console.log('item-active',item);
+              for(var key in data) {
+                //binding.value.obj[key] = data[key];
+                item[key] = data[key];
+              }
+            }
+          })
+          /*for(var key in data) {
+            binding.value.obj[key] = data[key];
+          }*/
         }
       });
       resize.register(dv);

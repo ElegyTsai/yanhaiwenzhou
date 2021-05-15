@@ -47,6 +47,22 @@
                     </div>
                 </div>
             </div>
+            <!--
+            <div class="section special">
+            <hr>
+            <span id="toolName">Tool name</span>
+            </div>
+            
+            <div id="size" class="section size">
+                <input class="slider" id="size-slider" type ="range" min ="1" max="20" step ="1" value ="1"/>
+            </div>
+
+            <div id="colorpaletteSection"  class="section colorpicker">
+                <div id="colorpalette" class="colorpalette"></div>
+            </div>
+            <div id="colorpaletteFillSection" class="section colorpicker">
+                <div id="colorpaletteFill" class="colorpalette"></div>
+            </div>-->
         </div>
     </div>
 </template>
@@ -65,7 +81,41 @@ export default {
             return this.$store.state.isSelected
         },
         selected: function(){
-            return this.$store.state.selected
+            var temp = this.$store.state.selected;
+            var minLeft = 1e9;
+            var minTop = 1e9;
+            var maxRight = 0;
+            var maxBottom = 0;
+            /*var nowchild = nowDom.getElementsByClassName('obj')[this.activeLi[i]];
+            //console.log('zhuiming-nowchild:', nowchild.offsetWidth);
+            //console.log('zhuiming-width:', nowchild.style.width,', height:', nowchild.style.height)
+            minLeft = Math.min(nowchild.offsetLeft, minLeft);
+            minTop = Math.min(nowchild.offsetTop, minTop);
+            maxRight = Math.max(nowchild.offsetLeft+nowchild.offsetWidth, maxRight);
+            maxBottom = Math.max(nowchild.offsetTop+ nowchild.offsetHeight, maxBottom);
+            console.log('zhuiming-minLeft:', minLeft, ',minTop:', minTop);
+            console.log('zhuiming-maxRight:', maxRight, ',maxBottom:', maxBottom);
+            var childs = nowchild.childNodes;
+            for(var j = childs.length - 1; j >= 1; j--) { 
+                //alert(childs[i].nodeName); 
+                nowchild.removeChild(childs[j]); 
+            }*/
+            for(var i=0; i<temp.length; i++){
+                minLeft = Math.min(temp[i].left, minLeft);
+                minTop = Math.min(temp[i].top, minTop);
+                maxRight = Math.max(temp[i].left+temp[i].width, maxRight);
+                maxBottom = Math.max(temp[i].top+ temp[i].height, maxBottom);
+                //console.log('zhuiming-minLeft:', minLeft, ',minTop:', minTop);
+            }
+            var mergeObj = {
+                left:minLeft,
+                top:minTop,
+                width:maxRight - minLeft,
+                height:maxBottom - minTop,
+                transform: 0
+            }
+            //return this.$store.state.selected
+            return mergeObj;
         },
     },
     watch: {

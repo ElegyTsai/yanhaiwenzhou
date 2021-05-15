@@ -1,16 +1,85 @@
 <template>
   <div class="frame">
+    
     <div class="materialTool" :class="show?'':'noshow'">
       <i class="el-icon-circle-close" @click="closeItem()"></i>
       <material></material>
     </div>
+    <div class="typography">
+      <div class="title">智能排版</div>
+      <div class="item">
+        <ul>
+          <li><span class="fir-text">类别:</span>
+            <ul class="sec-item">
+              <li :class="{'active':activeIndex1==index}" v-for="(item, index) in category" :key="item+index"
+              @click="handleClick1(index)">
+                <span class="text">{{item}}</span>
+              </li>
+            </ul>
+            <el-dialog
+              :title="category[activeIndex1]"
+              :visible.sync="dialogVisible1"
+              width="30%"
+              :before-close="handleClose">
+              <!--<span>这是一段信息</span>-->
+              <img :class="{'active':activeTemplate}" @click="selectTemplate()" class="templateImg" src="@/assets/typography/nangua.png">
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible1 = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible1 = false">确 定</el-button>
+              </span>
+            </el-dialog>
+          </li>
+          <li><span class="fir-text">排布:</span>
+            <ul class="sec-item">
+              <li :class="{'active':activeIndex2==index}" v-for="(item, index) in configuration" :key="item+index"
+              @click="handleClick2(index)">
+                <span class="text">{{item}}</span>
+              </li>
+            </ul>
+            <el-dialog
+              :title="configuration[activeIndex2]"
+              :visible.sync="dialogVisible2"
+              width="30%"
+              :before-close="handleClose">
+              <span>这是一段信息</span>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible2 = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible2 = false">确 定</el-button>
+              </span>
+            </el-dialog>
+          </li>
+          <li><span class="fir-text">结合:</span>
+            <ul class="sec-item">
+              <li :class="{'active':activeIndex3==index}" v-for="(item, index) in combination" :key="item+index"
+              @click="handleClick3(index)">
+                <span class="text">{{item}}</span>
+              </li>
+            </ul>
+            <el-dialog
+              :title="combination[activeIndex3]"
+              :visible.sync="dialogVisible3"
+              width="30%"
+              :before-close="handleClose">
+              <span>这是一段信息</span>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible3 = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible3 = false">确 定</el-button>
+              </span>
+            </el-dialog>
+          </li>
+        </ul>
+      </div>
+    </div>
     <div class="imgCanvas" id="imgCanvas" @click="moveSelected()">
       <file-tool></file-tool>
       <paint-tool></paint-tool>
-      <div class="paintCanvas">
-        <sketchpad></sketchpad>
+      <div class="paintCanvas" id='sketchpad' :style="style" :width="bgwidth+'px'">
+        <template-design :class="{'noshow':!activeTemplate}"></template-design>
         <obj class="obj" v-for="(obj, index) in objs" :key="index" :obj="obj" @click.prevent.stop.native="selectObj($event, obj)" v-drag="{obj:obj}"></obj>
       </div>
+    </div>
+    <div class="canvasTool">
+      <canvas-tool></canvas-tool>
     </div>
     <div class="imgTool" :class="{disable:!isSelected}">
       <img-tool></img-tool>
@@ -28,6 +97,61 @@ export default frame
 </script>
 
 <style>
+.frame .typography{
+  float: left;
+  border: 1px solid red;
+  height: 130px;
+  width: calc(100% - 220px);
+  margin: 0px 5px 10px 5px;
+}
+.frame .typography .el-dialog__body .templateImg{
+  max-height: 200px;
+}
+.frame .typography .el-dialog__body .active{
+  border:1px solid red;
+}
+.frame .typography .title{
+  font-size: 1.2em;
+  padding: .2em;  
+}
+.frame .typography .item ul{
+  list-style-type: none;
+  padding:0 0 0 0;
+}
+.frame .typography .item ul li{
+  height: 30px;
+  /*border: 1px solid green;*/
+  padding: 0;
+}
+.frame .typography .item ul li .fir-text{
+  position: relative;
+  display: inline-block;
+  top:-10px;
+}
+.frame .typography .item .sec-item{
+  display: inline-block;
+}
+.frame .typography .item .sec-item li{
+  float: left;
+  margin: 0 5px;
+  /*height: 30px;*/
+}
+.frame .typography .item .sec-item .active{
+  background: green;
+  color: white;
+}
+.frame .typography .item .text{
+  line-height: 30px;
+}
+.frame .canvasTool{
+  float:left;
+  width: 220px;
+  margin-left: 5px;
+  border:solid 1px blue;
+}
+.frame #sketchpad{
+  background-color: white;
+}
 .frame .materialTool {
   float: left;
   border: 1px solid red;
@@ -36,12 +160,12 @@ export default frame
 .frame .imgTool{
   float: left;
   margin-left: 5px;
-  width: 160px;
+  width: 220px;
   border: black solid 1px;
 }
 .frame .layerTool{
   float: left;
-  width: 160px;
+  width: 220px;
   border: red solid 1px;
   margin-left: 5px;
   margin-top: 5px;
@@ -49,29 +173,33 @@ export default frame
 .frame .imgCanvas {
   float: left;
   border: 1px solid green;
-  width: calc(100% - 390px);
+  width: calc(100% - 450px);
   min-height: 300px;
   height: calc(100vh - 0px);
   margin-left: 10px;
   position: relative;
-  overflow: hidden;
+  overflow:auto;
+  /*overflow: hidden;*/
 }
 .frame .paintCanvas{
   overflow: hidden;
   position: relative;
   height: inherit;
-  width: 100%;
+  width: 95%;
   white-space: nowrap;
   left: 35px;
   top: 35px;
   margin: 0px;
   border: 1px solid black;
-  background: rgb(211, 209, 209);
+  background: rgb(22, 22, 22);
   
+}
+.frame .paintCanvas .noshow{
+  display: none;
 }
 .frame .obj{
   position: absolute;
-  z-index: 22;
+  /*z-index: 22;*/
 }
 .frame .image{
   width: 100%;
@@ -114,7 +242,7 @@ export default frame
   border: 1px #4a98be solid;
   background: #7fd6ff;
   display: none;
-  z-index: 100;
+  /*z-index: 100;*/
 }
 
 .nw {left: -3px; top:-3px; z-index:110;cursor:nw-resize;}
