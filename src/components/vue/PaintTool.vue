@@ -49,7 +49,7 @@ import paintTool from '../js/paintTool'
 export default paintTool
 </script>
 
-<style>
+<style scoped>
 .paintTool {
     position: absolute;
     top: 35px;

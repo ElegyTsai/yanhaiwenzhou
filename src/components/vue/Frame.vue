@@ -75,7 +75,7 @@
       <paint-tool></paint-tool>
       <div class="paintCanvas" id='sketchpad' :style="style" :width="bgwidth+'px'">
         <template-design :class="{'noshow':!activeTemplate}"></template-design>
-        <obj class="obj" v-for="(obj, index) in objs" :key="index" :obj="obj" @click.prevent.stop.native="selectObj($event, obj)" v-drag="{obj:obj}"></obj>
+        <obj class="obj" v-for="(obj, index) in objs" :key="index" :obj="obj" @click.prevent.stop.native="selectObj($event, obj)" v-drag="{obj:obj, bgwidth:bgwidth}"></obj>
       </div>
     </div>
     <div class="canvasTool">
@@ -96,7 +96,7 @@ import frame from '../js/frame'
 export default frame
 </script>
 
-<style>
+<style scoped>
 .frame .typography{
   float: left;
   border: 1px solid red;
@@ -104,10 +104,10 @@ export default frame
   width: calc(100% - 220px);
   margin: 0px 5px 10px 5px;
 }
-.frame .typography .el-dialog__body .templateImg{
+.frame .typography >>> .el-dialog__body .templateImg{
   max-height: 200px;
 }
-.frame .typography .el-dialog__body .active{
+.frame .typography >>> .el-dialog__body .active{
   border:1px solid red;
 }
 .frame .typography .title{
@@ -155,6 +155,8 @@ export default frame
 .frame .materialTool {
   float: left;
   border: 1px solid red;
+  width: 200px;
+  height: 800px;
   /*width: 20%;*/
 }
 .frame .imgTool{
@@ -179,7 +181,9 @@ export default frame
   margin-left: 10px;
   position: relative;
   overflow:auto;
+
   /*overflow: hidden;*/
+  /*_height:1%;*/
 }
 .frame .paintCanvas{
   overflow: hidden;
@@ -209,7 +213,7 @@ export default frame
   width: 100%;
   height: 100%;
 }
-.frame .el-icon-circle-close{
+.frame >>> .el-icon-circle-close{
   position: absolute;
   float: right;
 }

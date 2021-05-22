@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import FirstPage from '@/components/nav/FirstPage'
 import Test from '@/components/nav/Test'
 import Login from '@/components/user/Login'
+import Regis from '@/components/user/Register'
 import Frame from '@/components/vue/Frame'
 
 Vue.use(Router)
@@ -55,7 +56,7 @@ const router =  new Router({
     {
       path:'/register',
       name:'注册',
-      component:Test
+      component:Regis
     },
     {
       path:'/login',
@@ -70,6 +71,16 @@ const router =  new Router({
 router.beforeEach((to, from, next)=>{
   console.log('from:', from.path)
   console.log('to:', to.path)
+  /*if(to.path=='/'){
+    next();
+  }*/
+  //if(to.path!==from.path){
+    next();
+  //}
+  //if(){
+    
+    //router.go(0);
+  //}
   /*if(to.path === '/login' || to.path==='/'){
     next();
   }else{
@@ -80,7 +91,8 @@ router.beforeEach((to, from, next)=>{
       next();
     }
   }*/
-  next();
+  //next();
+  //router.go(0);
 })
 
 export default router;

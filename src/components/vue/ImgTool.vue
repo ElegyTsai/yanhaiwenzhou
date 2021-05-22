@@ -126,7 +126,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
 .pro-box{
     padding: 10px 0;
 }

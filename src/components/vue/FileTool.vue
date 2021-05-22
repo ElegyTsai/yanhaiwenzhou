@@ -15,7 +15,7 @@ import fileTool from '../js/fileTool'
 export default fileTool
 </script>
 
-<style>
+<style scoped>
 .fileTool {
     position: absolute;
     left: 35px;

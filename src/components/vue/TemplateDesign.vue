@@ -36,6 +36,9 @@ export default {
     computed:{
         elementCount: function(){
             return this.$store.state.elementCount;
+        },
+        bgwidth: function(){
+            return this.$store.state.bgwidth;
         }
     },
     methods: {
@@ -74,23 +77,79 @@ export default {
             }
         },
         commonTemplate(url, className){
-            //var aNode  = document.getElementsByClassName('element a a-1');
             var aNode  = document.getElementsByClassName(className);
-            //aNode[0].removeChild(document.getElementById('test'));
             for(var i=0; i<aNode.length; i++){
-            aNode[i].innerHTML='';
-            var img = document.createElement("img");
-            img.className = "imgTem";
-            img.src = url;
-            aNode[i].appendChild(img);
-            console.log('aNode[i]', aNode[i]);
+                aNode[i].innerHTML='';
+                //计算transform属性的值
+                var st = window.getComputedStyle(aNode[i], null);
+                var tr = st.getPropertyValue("-webkit-transform") ||
+                            st.getPropertyValue("-moz-transform") ||
+                            st.getPropertyValue("-ms-transform") ||
+                            st.getPropertyValue("-o-transform") ||
+                            st.getPropertyValue("transform") ||
+                            "FAIL";
+                //console.log('tr:',tr);
+                var values = tr.split('(')[1].split(')')[0].split(',');
+                var a = values[0];
+                var b = values[1];
+                var angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+                //console.log('Rotate: ' + angle + 'deg');
+                var temp = {
+                        left: aNode[i].offsetLeft,
+                        top: aNode[i].offsetTop,
+                        width: aNode[i].offsetWidth,
+                        height: aNode[i].offsetHeight,
+                        value: url,
+                        active: false,
+                        transform: angle,
+                        visibility: 'visible',
+                        zIndex: this.$store.state.zIndex,
+                        outline: false
+                    };
+                this.$store.commit('addZIndex', this.$store.state.zIndex+1);
+                selectObj(null, temp);
+                //this.$store.commit('pushObj', temp);
+                pushObj(temp);
+                if(temp.left+temp.width>this.bgwidth){
+                //console.log('outline:',item.left-bgwidth);
+                //item.outline = true;
+                //console.log('outline:', item.outline)
+                //this.$store.commit('pushObj', obj);
+                //console.log('component-zIndex:',temp.zIndex);
+                if(temp.outline==false){
+                  var temp2 = {
+                    left: temp.left-this.bgwidth,
+                    top: temp.top,
+                    width: temp.width,
+                    height: temp.height,
+                    value: temp.value,
+                    active: temp.active,
+                    transform: temp.transform,
+                    visibility: temp.visibility,
+                    zIndex: temp.zIndex,
+                    outline: true,
+                    /*id: item.id,*/
+                    oldLeft: temp.oldLeft - this.bgwidth,
+                    oldTop: temp.oldTop
+                  };
+                  //var temp = Object.assign({}, item);
+                  //temp.left = 10;
+                  //console.log('item:', item);
+                  //console.log('temp:',temp);
+                  pushObj(temp2);
+                  temp.outline=true;
+                  //console.log('index',1);
+                }
+                
+              }
+                //console.log('store.objs:', this.$store.state.objs);
             }
         },
     }
 }
 </script>
 
-<style>
+<style scoped>
 .nangua{
     /*border: 1px solid green;*/
     position: relative;
@@ -106,51 +165,76 @@ export default {
 .nangua .a-1-1{
     left:140px;
     top:100px;
+    width:120px;
+    height:100px;
+    transform: rotate(0deg);
 }
 .nangua .a-1-2{
     left:50px;
     top:650px;
+    width:120px;
+    height:100px;
+    transform: rotate(0deg);
 }
 .nangua .a-2-1{
     left:100px;
     top:300px;
     transform: rotate(30deg);
+    width:80px;
+    height:80px;
 }
 .nangua .a-3-1{
 
     left:0px;
     top:500px;
+    width:50px;
+    height:50px;
+    transform: rotate(0deg);
 }
 .nangua .b-1-1{
 
     left:30px;
     top:200px;
     transform: rotate(200deg);
+    width:50px;
+    height:50px;
 }
 .nangua .b-2-1{
 
     left:80px;
     top:25px;
     transform: rotate(45deg);
+    width:40px;
+    height: 40px;
 }
 .nangua .b-2-2{
     left:5px;
     top:350px;
+    width:40px;
+    height: 40px;
+    transform: rotate(0deg);
 }
 .nangua .b-2-3{
     left:140px;
     top: 550px;
     transform: rotate(320deg);
+    width:40px;
+    height: 40px;
 }
 .nangua .c-1-1{
     left:100px;
     top:400px;
     transform: rotate(330deg);
+    width:80px;
+    height:40px;
 }
 .nangua .c-1-2{
     left:20px;
     top:-15px;
     transform: rotate(330deg);
+    width:80px;
+    height:40px;
+
 }
 
 </style>

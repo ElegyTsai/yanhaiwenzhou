@@ -34,8 +34,22 @@ export default {
         }
     },
     computed: {
-        layers: function (){
+        objs: function(){
             return this.$store.state.objs;
+        },
+        layers: function (){
+            //根据obj.zIndex去重
+            var objs = this.$store.state.objs;
+            var tempSet = new Set([]);
+            var layers = [];
+            for(var i=0; i<objs.length; i++){
+                if(!tempSet.has(objs[i].zIndex)){
+                    tempSet.add(objs[i].zIndex);
+                    layers.push(objs[i]);
+                }
+            }
+            console.log('layers:', layers);
+            return layers;
         }
     },
     mounted() {
@@ -68,7 +82,7 @@ export default {
             var e = ev || window.event;
             var elem = e.target;
             var targetArea = document.getElementById('layerfun');
-            if(!targetArea.contains(elem)){
+            if(!targetArea && !targetArea.contains(elem)){
                 targetArea.style.display = 'none';
             }
         })
@@ -121,9 +135,19 @@ export default {
             var nowDom = document.getElementById('layer');
             if(this.isVisible==false){
                 this.layers[index].visibility = 'hidden';
+                for(var i=0; i<this.objs.length; i++){
+                    if(this.objs[i].zIndex == this.layers[index].zIndex){
+                        this.objs[i].visibility = 'hidden';
+                    }
+                }
                 nowDom.getElementsByTagName('i')[index].className='noshow';
             }else{
                 this.layers[index].visibility = 'visible';
+                for(var i=0; i<objs.length; i++){
+                    if(this.objs[i].zIndex == this.layers[index].zIndex){
+                        this.objs[i].visibility = 'visible';
+                    }
+                }
                 nowDom.getElementsByTagName('i')[index].className='el-icon-view';
             }
         },
@@ -181,7 +205,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .layertool #layerfun{
     position: absolute;;
     display: none;

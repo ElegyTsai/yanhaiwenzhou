@@ -351,7 +351,7 @@ footer section>ul li ul li h2{
     max-width: 400px;
     padding:60px 0 20px 0;
 }
-.design .el-button{
+.design >>> .el-button{
     background-image: url(../../assets/images/price.png);
     width: 500px;
     height: 500px;
@@ -359,7 +359,7 @@ footer section>ul li ul li h2{
 .myslide img{
     max-height: 500px;
 }
-.el-carousel__item h3 {
+.firstpage >>> .el-carousel__item h3 {
     color: #475669;
     font-size: 14px;
     opacity: 0.75;
@@ -367,14 +367,17 @@ footer section>ul li ul li h2{
     margin: 0;
 }
 
-.el-carousel__item:nth-child(2n) {
+.firstpage >>> .el-carousel__item:nth-child(2n) {
 background-color: #99a9bf;
 }
 
-.el-carousel__item:nth-child(2n+1) {
+.firstpage >>> .el-carousel__item:nth-child(2n+1) {
 background-color: #d3dce6;
 }
-.el-carousel__arrow .el-icon-arrow-left,.el-icon-arrow-right{
+.firstpage >>>.el-icon-arrow-left{
+    display: inline-block;
+}
+.firstpage >>> .el-icon-arrow-right{
     display: inline-block;
 }
 .myslide .temp{

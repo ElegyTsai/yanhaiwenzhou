@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: {
+        token: '',
         objs: [],
         selected: {},
         isSelected: false,
@@ -19,9 +20,16 @@ const store = new Vuex.Store({
 
     },
     mutations: {
+        setToken(state, token){
+            state.token = token;
+            sessionStorage.token = token;
+        },
         pushObj (state, obj){
             state.objs.push(obj);
-            //console.log('zhuiming-vuex:', state.objs);
+            console.log('zhuiming-vuex:', state.objs);
+        },
+        clearObjs (state){
+            state.objs = [];
         },
         setSelected (state, selected){
             state.selected = selected;
@@ -49,6 +57,14 @@ const store = new Vuex.Store({
         },
         changeElementCount(state, elementCount){
             state.elementCount = elementCount;
+        }
+    },
+    getters: {
+        getToken(state){
+            if(!state.token){
+                state.token = sessionStorage.getItem('token');
+            }
+            return state.token;
         }
     }
 })

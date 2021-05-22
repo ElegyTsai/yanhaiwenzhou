@@ -11,6 +11,7 @@ var Resize = require('./resize')
 export default (Vue) => {
   Vue.component('obj', {
     props: ['obj'],
+    
     data: function () {
       var obj = this.obj;
       var mappers = {
@@ -50,7 +51,13 @@ export default (Vue) => {
         }
       }
     },
-    template: '<div :class="{obj:true, active:data.active}" :style="style()"><div class="image"><img :src="data.value"></div></div>'
+    template: '<div :class="{obj:true, active:data.active}" :style="style()"><div class="image"><img :src="data.value"></div></div>',
+    computed: {
+      bgWidth: function(){
+        return this.$store.state.bgWidth;
+      }
+      
+    },
   });
 
   Vue.directive('drag', {
@@ -98,18 +105,58 @@ export default (Vue) => {
         },
         onDrag: function (data) {
           var obj = binding.value.obj;
-          //console.log('zhuiming-onDrag-obj:',obj);
+          //console.log('zhuiming-onDrag-binding.value:',binding.value);
           obj.left = data.left;
           obj.top = data.top;
 
+          var bgwidth = binding.value.bgwidth;
+          //console.log('zhuiming-bgwidth:', bgwidth);
           //所有选中的移动，不包括当前（？？）
+          //console.log('objs:', objs);
           objs.forEach(item => {
-            if(item.active && item != obj){
-            //if(item.active){
+            //console.log('item:',item);
+            //if(item.active && item != obj){
+            if(item.active){
+              //console.log('acive!!!');
               item.left = data.x + item.oldLeft;
               item.top = data.y + item.oldTop;
+              
               //console.log('zhuiming-item.value:',item.value,';item.left=:', item.left,";item.top=", item.top);
-        
+              //console.log('zhuiming-item.left:', item.left);
+              //console.log('zhuiming-bgwidth:', bgwidth);
+              if(item.left+item.width>bgwidth){
+                //console.log('outline:',item.left-bgwidth);
+                //item.outline = true;
+                //console.log('outline:', item.outline)
+                //this.$store.commit('pushObj', obj);
+                //console.log('component-zIndex:',item.zIndex);
+                if(item.outline==false){
+                  var temp = {
+                    left: item.left-bgwidth,
+                    top: item.top,
+                    width: item.width,
+                    height: item.height,
+                    value: item.value,
+                    active: item.active,
+                    transform: item.transform,
+                    visibility: item.visibility,
+                    zIndex: item.zIndex,
+                    outline: true,
+                    /*id: item.id,*/
+                    oldLeft: item.oldLeft - bgwidth,
+                    oldTop: item.oldTop
+                  };
+                  //var temp = Object.assign({}, item);
+                  //temp.left = 10;
+                  //console.log('item:', item);
+                  //console.log('temp:',temp);
+                  pushObj(temp);
+                  item.outline=true;
+                  //console.log('index',1);
+                }
+                
+              }
+              //console.log('zhuiming-bgWidth:',item.bgWidth);
             }
           })
           //console.log('zhuiming-dragonDrag')

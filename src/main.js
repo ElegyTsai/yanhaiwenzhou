@@ -9,6 +9,8 @@ import "bootstrap/dist/css/bootstrap.css"
 import 'font-awesome/css/font-awesome.min.css'
 import store from './store/index'
 import router from './router/index'
+import axios from 'axios'
+Vue.prototype.$http = axios
 Vue.use(ElementUI)
 Vue.use(componentObj)
 

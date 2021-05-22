@@ -44,7 +44,7 @@
                     <input type="number" v-model="rgba[3]" placeholder="a">
                 </div>-->
                 <el-color-picker v-model="bgcolor" size="mini" show-alpha></el-color-picker>
-            </div>
+            
             <div class="section special">
             <hr>
             <span id="toolName">Tool Name</span>
@@ -66,7 +66,7 @@
     
 </template>
 
-<script>
+<script scoped>
 export default {
     data () {
         return {
@@ -74,11 +74,12 @@ export default {
             title2: '背景色',
             bgcolor: this.$store.state.bgcolor,
             bgwidth: this.$store.state.bgwidth,
-            bgheight: this.$store.state.bgheight,
-            
+            bgheight: this.$store.state.bgheight
         }
     },
-    
+    computed:{
+        
+    },
     watch: {
         bgcolor(val, oldval){
             this.$store.commit('changeBgColor', val);
@@ -107,7 +108,7 @@ export default {
 .canvastool{
     text-align: center;
 }
-.canvastool .el-color-picker{
+.canvastool >>> .el-color-picker{
     left: 10px;
     top: 10px;
 }

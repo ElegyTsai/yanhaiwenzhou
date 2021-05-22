@@ -6,7 +6,9 @@
         <el-tab-pane v-for="item in options" :name="item.route" :key="item.route" :label="item.name">
         </el-tab-pane>
       </el-tabs>
-      <span @click="register()">{{register_str}}</span><span @click="login()">{{login_str}}</span>
+      <span :class="{'noshow':username}" @click="register()">{{register_str}}</span>
+      <span :class="{'noshow':username}" @click="login()">{{login_str}}</span>
+      <span :class="{'noshow':!username}" @click="userSelection()">{{username}}</span>
     </div>
     <div class="content-wrap">
       <router-view/>
@@ -54,6 +56,11 @@ export default {
       login_str:'登录'
     }
   },
+  computed: {
+    username: function(){
+      return this.$store.getters.getToken;
+    }
+  },
   methods:{
     handleClick(tab, event) {
       //console.log(tab, event);
@@ -66,6 +73,24 @@ export default {
     },
     login(){
       this.$router.push('./login')
+    },
+    userSelection(){
+      this.$confirm('您确定退出登录?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$store.commit('setToken','');
+          this.$message({
+            type: 'success',
+            message: '退出登录!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });          
+        });
     }
   },
   /*
@@ -77,7 +102,7 @@ export default {
 }
 </script>
 
-<style >
+<style scoped>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -110,31 +135,35 @@ export default {
   margin-bottom: 60px;
 }
 
-.bar .el-tabs {
+.bar >>> .el-tabs {
   display: inline-block;
   
 }
-.bar .el-tabs__item{
+.bar >>> .el-tabs__item{
   color: white;
   font-size: 12px;
   margin-top: 10px;
   font-weight: bold;
   letter-spacing: 0.2em;
 }
-.bar .el-tabs__nav-wrap::after{
+.bar >>> .el-tabs__nav-wrap::after{
   background-color: black;
 }
-.bar .el-tabs__active-bar{
+.bar .noshow{
+  display: none;
+}
+.bar >>> .el-tabs__active-bar{
   position: relative;
   height: 4px;
 }
-.bar .el-tabs__active-bar.is-top{
+.bar >>> .el-tabs__active-bar.is-top{
   background:#53E4C7;
 }
-.bar .el-tabs__item.is-top.is-active{
+.bar >>> .el-tabs__item.is-top.is-active{
     color:#53E4C7;
 }
 .content-wrap{
+  height: 100%;
   margin: 0px;
   padding: 0px;
 }

@@ -42,6 +42,8 @@ export default {
   },
   computed: {
     objs: function(){
+      //console.log('frame-objs:', this.$store.state.objs);
+      window.objs = this.$store.state.objs;
       return this.$store.state.objs
     },
     selected: function(){
@@ -69,6 +71,8 @@ export default {
   mounted (){
     window.objs = this.objs,
     window.addObj = this.addObj,
+    window.pushObj = this.pushObj,
+    window.selectObj = this.selectObj,
     //window.addTemplate = this.addTemplate,
     window.initSketchpad = this.initSketchpad
   },
@@ -80,6 +84,7 @@ export default {
       this.$store.commit('changeBgWidth', 200);
       this.$store.commit('changeBgHeight', 800);
       this.$store.commit('changeElementCount', 6);
+      this.$store.commit('clearObjs');
     },
     /*
     //模板匹配函数
@@ -141,6 +146,7 @@ export default {
           item.active = false;
         });
         obj.active = true;
+        console.log('active-obj:',obj);
         var temp = [obj];
         this.objs.forEach(item => {
           if(item.zIndex==obj.zIndex){
@@ -170,7 +176,9 @@ export default {
         active: false,
         transform: 0,
         visibility: 'visible',
-        zIndex: this.$store.state.zIndex
+        zIndex: this.$store.state.zIndex,
+        outline: false,
+        /*id: this.getObjId()*/
       };
       this.$store.commit('addZIndex', this.$store.state.zIndex+1);
       this.selectObj(null, temp);
@@ -183,10 +191,9 @@ export default {
       this.$store.commit('pushObj', obj);
       //console.log('zhuiming-obj',obj)
     },
-    /*
     getObjId(){
       return new Date().getTime() + "" + Math.floor(Math.random() * 89999 + 10000);
-    },*/
+    },
     closeItem(){
       this.show = false;
       var div=document.getElementById('imgCanvas');

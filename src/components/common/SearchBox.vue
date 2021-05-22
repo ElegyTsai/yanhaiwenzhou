@@ -24,39 +24,39 @@ export default {
     }
 }
 </script>
-<style >
+<style scoped>
 *{
     margin: 0;
     padding: 0;
 }
-.el-radio__inner{
+.searchbox >>> .el-radio__inner{
     width: 25px;
     height: 25px;
 }
-.el-radio-group{
+.searchbox >>> .el-radio-group{
     margin: 20px auto;
 }
-.el-radio__label{
+.searchbox >>> .el-radio__label{
     font-size: 20px;
     vertical-align: middle;
     color: white;
     font-weight: normal;
 }
 
-.search_logo{
+.searchbox >>> .search_logo{
     margin-left: -5px;
 }
 #logo2{
     margin-left: -18px;
 }
-.el-radio__input.is-checked .el-radio__inner{
+.searchbox >>> .el-radio__input.is-checked >>> .el-radio__inner{
     border-color: white;
     background-color: green;
 }
-.el-radio__input.is-checked+.el-radio__label{
+.searchbox >>> .el-radio__label{
     color:green;
 }
-.el-input{
+.searchbox >>> .el-input{
     margin-top: 20px;
     width: 400px;
     height: 52px;
@@ -70,7 +70,7 @@ export default {
     justify-content: center;
     
 }
-.el-input__inner{
+.searchbox >>> .el-input__inner{
     height: 50px;
     border-radius: 10px;
 }
