@@ -1,32 +1,25 @@
-//var Utils = require('./utils')
+//画布上的操作函数
 import Material from '../vue/Material'
 import PaintTool from '../vue/PaintTool'
 import FileTool from '../vue/FileTool'
-import Utils from '../vue/Utils'
 import ImgTool from '../vue/ImgTool'
 import LayerTool from '../vue/LayerTool'
 import CanvasTool from '../vue/CanvasTool'
-import TemplateDesign from '../vue/TemplateDesign'
+import Typography from '../vue/Typography'
 export default {
   name: 'frame',
   components: {
     Material,
     PaintTool,
     FileTool,
-    Utils,
     ImgTool,
     LayerTool,
     Sketchpad,
     CanvasTool,
-    TemplateDesign
+    Typography
   },
   data () {
     return {
-      //selected: {},
-      //isSelected: false,
-      /*objs: this.$store.state.objs, 
-      selected: this.$store.state.selected,
-      isSelected: this.$store.state.isSelected?true:false,*/
       show: true,
       category:['全部','家纺','服装','家居','广告传媒','印刷包装','文创设计','陶瓷设计'],
       configuration:['全部','散点构图','规矩构图','错行构图','组合构图','变形构图','底纹构图'],
@@ -37,12 +30,11 @@ export default {
       dialogVisible1: false,
       dialogVisible2: false,
       dialogVisible3: false,
-      //activeTemplate: false
     }
   },
   computed: {
     objs: function(){
-      //console.log('frame-objs:', this.$store.state.objs);
+      //将objs挂载到window对象上以便component.js中使用
       window.objs = this.$store.state.objs;
       return this.$store.state.objs
     },
@@ -66,6 +58,9 @@ export default {
     },
     activeTemplate: function(){
       return this.$store.state.activeTemplate;
+    },
+    zIndex: function (){
+      return this.$store.state.zIndex;
     }
   },
   mounted (){
@@ -73,83 +68,100 @@ export default {
     window.addObj = this.addObj,
     window.pushObj = this.pushObj,
     window.selectObj = this.selectObj,
-    //window.addTemplate = this.addTemplate,
-    window.initSketchpad = this.initSketchpad
+    window.initSketchpad = this.initSketchpad,
+
+    //监听是否点击在元素右键列表区域
+    window.addEventListener('mousedown', ev=>{
+    var e = ev || window.event;
+        var elem = e.target;
+        var targetArea = document.getElementById('objfun');
+        if(targetArea && !targetArea.contains(elem)){
+         targetArea.style.display = 'none';
+        }
+    })
   },
   methods: {
-    selectTemplate(){
-      //this.activeTemplate = true;
-      this.$store.commit('changeActiveTemplate', true);
-      //this.$store.commit('changeBgColor', val);
-      this.$store.commit('changeBgWidth', 200);
-      this.$store.commit('changeBgHeight', 800);
-      this.$store.commit('changeElementCount', 6);
-      this.$store.commit('clearObjs');
+    //元素上点击右键显示操作列表
+    rightClick(ev, obj){
+      var res = document.getElementById('objfun'); 
+      res.style.top = obj.top + ev.offsetY + 'px';
+      res.style.left = obj.left + ev.offsetX + 'px';
+      res.style.display = 'block';
+      ev.stopPropagation();
     },
-    /*
-    //模板匹配函数
-    addTemplate(url, index){
-      switch(index){
-        case 0:
-          this.commonTemplate(url, 'a-1');
+    //元素右键列表函数，此处只是改变clickStatus的状态，以便material.js中元素点击时调用相应的函数
+    //页面效果还需改进
+    liClick(ev, clickStatus){
+      ev.stopPropagation();
+      document.getElementById('objfun').style.display='none';
+      this.$store.commit('changeClickStatus', clickStatus);
+      switch (clickStatus){
+        //替换一个元素
+        case 'replaceObj':
+          this.$notify({
+            title: '提示',
+            message: '请在素材栏选择替换素材'
+          });
           break;
-        case 1:
-
-      
-        
+        //替换一类元素
+        case 'replaceObjAll':
+          this.$notify({
+            title: '提示',
+            message: '请在素材栏选择替换素材，您所选的元素将替换本类所有元素'
+          });
+          break;
+        //配色
+        case 'colorMatch':
+          this.$notify({
+            title: '提示',
+            message: '请选择配色参考图'
+          });
+          break;
+        //删除
+        case 'deleteObj':
+          this.$confirm('确认删除?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            for(var i=0; i<this.selected.length; i++){
+              var index = this.objs.indexOf(this.selected[i]); 
+              if(index!=-1){
+                this.objs.splice(index, 1);
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+              }
+            }
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });          
+          });
+          break;
+        default:
+          alert('暂不支持该选项');
       }
     },
-    commonTemplate(url, className){
-      //var aNode  = document.getElementsByClassName('element a a-1');
-      var aNode  = document.getElementsByClassName(className);
-      //aNode[0].removeChild(document.getElementById('test'));
-      for(var i=0; i<aNode.length; i++){
-        aNode[i].innerHTML='';
-        var img = document.createElement("img");
-        img.className = "imgTem";
-        img.src = url;
-        aNode[i].appendChild(img);
-        console.log('aNode[i]', aNode[i]);
-      }
-    },*/
-    handleClose(done) {
-      this.$confirm('确认关闭？')
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
-    },
-    handleClick1(index){
-      this.activeIndex1 = index;
-      this.dialogVisible1 = true;
-    },
-    handleClick2(index){
-      this.activeIndex2 = index;
-      this.dialogVisible2 = true;
-    },
-    handleClick3(index){
-      this.activeIndex3 = index;
-      this.dialogVisible3 = true;
-    },
-    moveSelected(){
-      //this.selected = [];
-      //this.$store.commit('setSelected', null);
-      this.selected.active = false;
+    //点击画布，所有元素都未被选中
+    removeSelected(){
       this.$store.commit('setIsSelected', false);
-      //console.log('zhuiming-canvasclick')
+      this.$store.commit('setSelected', []);
+      this.objs.forEach(item => {
+          item.active = false;
+      });
     },
+    //选中元素
     selectObj (ev, obj) {
-      //if(this.activeTemplate){
-        //console.log('mubanpipei')
-      //}else{
         this.objs.forEach(item => {
           item.active = false;
         });
         obj.active = true;
-        console.log('active-obj:',obj);
         var temp = [obj];
         this.objs.forEach(item => {
-          if(item.zIndex==obj.zIndex){
+          if(item.zIndex==obj.zIndex && item!=obj){
             item.active = true;
             temp.push(item);
           }
@@ -157,13 +169,10 @@ export default {
         if(ev){
           ev.preventDefault();
         }
-        //this.selected = obj;
-        //this.isSelected = true;
-        //this.$store.commit('setSelected', obj);
         this.$store.commit('setSelected', temp);
-        this.$store.commit('setIsSelected', true);//}
-      //console.log('zhuiming-selectObj:', obj);
+        this.$store.commit('setIsSelected', true);
     },
+    //添加元素
     addObj (url, x, y) {
       x = x || 10;
       y = y || 10;
@@ -176,29 +185,29 @@ export default {
         active: false,
         transform: 0,
         visibility: 'visible',
-        zIndex: this.$store.state.zIndex,
+        zIndex: this.zIndex,
         outline: false,
-        /*id: this.getObjId()*/
       };
-      this.$store.commit('addZIndex', this.$store.state.zIndex+1);
-      this.selectObj(null, temp);
+      
+      this.$store.commit('addZIndex', this.$store.state.zIndex+1);//添加元素时默认新建一个图层
+      this.selectObj(null, temp); //添加时默认选中
       this.pushObj(temp);
-      //console.log('zhuiming-addObj');
     },
     pushObj (obj) {
-      //obj.id = this.getObjId();
-      //this.objs.push(obj);
       this.$store.commit('pushObj', obj);
-      //console.log('zhuiming-obj',obj)
     },
+    /*//暂时未用
     getObjId(){
       return new Date().getTime() + "" + Math.floor(Math.random() * 89999 + 10000);
-    },
+    },*/
+    //关闭素材栏
     closeItem(){
       this.show = false;
       var div=document.getElementById('imgCanvas');
       div.style.width = '100%';
     },
+    //初始化画板
+    //参考https://github.com/cojapacze/sketchpad
     initSketchpad(){
       var sketchpadEl = document.getElementById("sketchpad");
       var sketchpad = new Sketchpad({

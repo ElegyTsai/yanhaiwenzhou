@@ -1,3 +1,5 @@
+//sketchpad功能函数
+//参考https://github.com/cojapacze/sketchpad
 export default {
     data () {
         return {
@@ -7,10 +9,6 @@ export default {
         }
     },
     computed: {
-        /*...mapState([
-            'tools',
-            'toolId'
-        ]),*/
     },
     methods: {
         selectTool (toolId) {

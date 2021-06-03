@@ -1,4 +1,5 @@
 <template>
+<!--画布参数设置页-->
     <div class='canvastool'>
         <span>{{title1}}</span>
         <div class="title">大小设置</div>

@@ -2,17 +2,16 @@
  * drag
  * @constructor
  */
-//function Drag(obj){
 var Drag = function(obj){
     /**
      * @param el为节点
      */
     this.register = function (el) {
+        //监听鼠标按下和移动
         el.addEventListener('mousedown', function (ev) {
             if(ev.button !=0){
                 return; //屏蔽左键以外的按键
             }
-            //el.classList.add("active");
             var x = ev.clientX;
             var y = ev.clientY;
 
@@ -49,20 +48,18 @@ var Drag = function(obj){
                         top: nt,
                         x: nx - x,
                         y: ny - y
-                        /*position: 'absolute'*/
                     })
                     
                 }
                 
                 return false;
             }
-
+            //鼠标左键弹起
             window.onmouseup = function (ev) {
                 isDown = false;
                 el.style.cursor = 'default';
 
                 if(obj && obj.onEnd) {
-                    //el.classList.remove("active");
                     obj.onEnd.call(el, {
                         left: nl,
                         top: nt

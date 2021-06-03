@@ -1,10 +1,12 @@
 <template>
+<!--图层设置页-->
     <div class="layertool">
         <div class="title">{{title}}</div>
         
         <div class="layer" id='layer'>
             <ul>
-                <li :class="{'selected':activeLi.indexOf(index)>-1}" class="layeritem" v-for="(item, index) in layers" :key="index" @contextmenu.prevent.stop="rightClick(item,$event)" @click.prevent="pinSelect($event, index)" ref="list">
+                <li :class="{'selected':activeLi.indexOf(index)>-1}" class="layeritem" v-for="(item, index) in layers" :key="index" 
+                    @contextmenu.prevent.stop="rightClick(item,index, $event)" @click.prevent="pinSelect($event, index)" ref="list">
                     <i class="el-icon-view" @click="handleClick(index)"></i>
                     <img :src="item.value"/>
                     <span>图层{{index}}</span>
@@ -82,7 +84,7 @@ export default {
             var e = ev || window.event;
             var elem = e.target;
             var targetArea = document.getElementById('layerfun');
-            if(!targetArea && !targetArea.contains(elem)){
+            if(targetArea && !targetArea.contains(elem)){
                 targetArea.style.display = 'none';
             }
         })
@@ -122,12 +124,19 @@ export default {
         deleteLayer(){
 
         },
-        rightClick(item, ev){
+        rightClick(item, index, ev){
             var res = document.getElementById('layerfun');      //找到id为box的div
-            console.log('ev:', ev);
+            //
+            //console.log('ev:', ev);
+            //res.style.position = 'absolute'
             //console.log('ev.clientX:', ev.clientX,'ev.clientY:', ev.clientY)
-            res.style.top = ev.y+80+'px';     //鼠标点击时给div定位Y轴
-            res.style.left = ev.x+'px';    //鼠标点击时给div定位X轴
+            res.style.top = (index+1)*35+ev.offsetY+'px';     //鼠标点击时给div定位Y轴
+            if(ev.offsetX<100){
+                res.style.left = 50+ev.offsetX+'px'; 
+            }else{
+                res.style.left = 10+ev.offsetX+'px';    //鼠标点击时给div定位X轴
+            }
+            
             res.style.display = 'block';        //显示div盒子
         },
         handleClick (index){
@@ -223,6 +232,7 @@ export default {
     border-bottom: black ;
 }
 .layertool {
+    position: relative;
     border: red solid 1px;
     height: 400px;
 }

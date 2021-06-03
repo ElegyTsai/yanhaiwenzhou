@@ -9,24 +9,20 @@ var Resize = function (options) { //options表示当前操作
                         //西北   西    西南  南    东南  东    东北  北
 
         //增加元素
-        //el.querySelector('.image').className += ' direction'
         directions.forEach(direction => {
             var div = document.createElement('div');
-            //var div = document.querySelector('options')
             div.className = 'direction ' + direction;
             el.appendChild(div);
-            //el.querySelector('.image').className += ' '+direction
         })
 
         var border = document.createElement('div');
         border.className = 'border';
         el.appendChild(border);
-        //el.querySelector('.image').className += ' '+ 'border';
 
         //注册事件
         directions.forEach(direction => {
-            //console.log('direction:', direction)
             var temp = el.querySelector("." + direction);
+            //计算旋转角度
             if(direction=='r'){
                 var pointA = {X:el.offsetWidth/2+el.offsetLeft,
                             Y:el.offsetHeight/2 + el.offsetTop};
@@ -110,16 +106,13 @@ var Resize = function (options) { //options表示当前操作
                     }
 
                     var fun = mappers[direction];
-                    //console.log('zhuiming-fun:', fun);
                     if(fun){
-                        //console.log('zhuiming-fun');
                         fun.call(temp, data, ev);
                     }
                 }
                 window.onmouseup = function (ev) {
                     isResize = false;
                     ev.stopPropagation();
-                    //console.log('zhuiming-resize-mouseup');
                     if(options && options.onEnd){
                         options.onEnd.call(el);
                     }

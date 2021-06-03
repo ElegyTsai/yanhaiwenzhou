@@ -16,7 +16,10 @@ const store = new Vuex.Store({
         bgheight: 600,
         zIndex: 1,
         activeTemplate: false,
-        elementCount: 0
+        elementCount: 0,
+        replace: false,
+        replaceAll: false,
+        clickStatus:'ordinary'
 
     },
     mutations: {
@@ -57,6 +60,15 @@ const store = new Vuex.Store({
         },
         changeElementCount(state, elementCount){
             state.elementCount = elementCount;
+        },
+        changeReplace(state, replace){
+            state.replace = replace;
+        },
+        changeReplaceAll(state, replaceAll){
+            state.replaceAll = replaceAll;
+        },
+        changeClickStatus(state, clickStatus){
+            state.clickStatus = clickStatus;
         }
     },
     getters: {

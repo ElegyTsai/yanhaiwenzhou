@@ -1,4 +1,5 @@
 <template>
+<!--元素设置页-->
     <div class="imgtool" >
         <div >
             <div class="pro-box">

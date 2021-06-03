@@ -1,4 +1,5 @@
 <template>
+<!--sketchpad栏-->
     <div class="paintTool">
         <div class="section drawing">
           <div id="tool-pen" @click="selectTool('pen')" class="button"><i class="fa fa-pencil" aria-hidden="true"></i></div>

@@ -1,4 +1,5 @@
 <template>
+<!--登录页-->
     <div class="loginPage">
         <section>
             <img src="@/assets/images/login/logo.png">
@@ -82,7 +83,6 @@ export default {
                         //新注册
                         alert('登录成功');
                         this.$store.commit('setToken', res.data.username);
-                        //this.$router.push('/');
                       }else{
                           console.log('regis fail')
                       }
@@ -123,28 +123,6 @@ export default {
                 }
               
             }
-
-            //let _this = this;
-
-            /*if(this.loginForm.phonenumber==='' || this.loginForm.password===''){
-                alert('手机号或密码不能为空');
-            }else{
-                this.axios({
-                    method:'get',
-                    url:'/api/test.txt',
-                    data:_this.loginForm
-                }).then(res=>{
-                    console.log(res.data);
-                    _this.userToken = 'zhuiming'+res.data.data.body.token;
-                    //将用户token保存到vuex中
-                    _this.changeLogin({Authorization: _this.userToken})
-                    _this.$router.push('/');
-                    alert('登录成功');
-                }).catch(error=>{
-                    alert('账号或密码错误');
-                    console.log(error);
-                })
-            }*/
         }
     }
 }

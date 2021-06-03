@@ -1,4 +1,5 @@
 <template>
+<!--临时页-->
     <div class="router-template">
         <div class="template-wrap">
             {{$route.name}}

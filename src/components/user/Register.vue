@@ -1,4 +1,5 @@
 <template>
+<!--注册页-->
     <div class="regisPage">
         <section>
             <img src="@/assets/images/login/logo.png">

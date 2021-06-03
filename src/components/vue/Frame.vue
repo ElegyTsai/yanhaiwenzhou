@@ -1,81 +1,31 @@
 <template>
+<!--画布页-->
   <div class="frame">
-    
     <div class="materialTool" :class="show?'':'noshow'">
       <i class="el-icon-circle-close" @click="closeItem()"></i>
       <material></material>
     </div>
-    <div class="typography">
-      <div class="title">智能排版</div>
-      <div class="item">
-        <ul>
-          <li><span class="fir-text">类别:</span>
-            <ul class="sec-item">
-              <li :class="{'active':activeIndex1==index}" v-for="(item, index) in category" :key="item+index"
-              @click="handleClick1(index)">
-                <span class="text">{{item}}</span>
-              </li>
-            </ul>
-            <el-dialog
-              :title="category[activeIndex1]"
-              :visible.sync="dialogVisible1"
-              width="30%"
-              :before-close="handleClose">
-              <!--<span>这是一段信息</span>-->
-              <img :class="{'active':activeTemplate}" @click="selectTemplate()" class="templateImg" src="@/assets/typography/nangua.png">
-              <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible1 = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible1 = false">确 定</el-button>
-              </span>
-            </el-dialog>
-          </li>
-          <li><span class="fir-text">排布:</span>
-            <ul class="sec-item">
-              <li :class="{'active':activeIndex2==index}" v-for="(item, index) in configuration" :key="item+index"
-              @click="handleClick2(index)">
-                <span class="text">{{item}}</span>
-              </li>
-            </ul>
-            <el-dialog
-              :title="configuration[activeIndex2]"
-              :visible.sync="dialogVisible2"
-              width="30%"
-              :before-close="handleClose">
-              <span>这是一段信息</span>
-              <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible2 = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible2 = false">确 定</el-button>
-              </span>
-            </el-dialog>
-          </li>
-          <li><span class="fir-text">结合:</span>
-            <ul class="sec-item">
-              <li :class="{'active':activeIndex3==index}" v-for="(item, index) in combination" :key="item+index"
-              @click="handleClick3(index)">
-                <span class="text">{{item}}</span>
-              </li>
-            </ul>
-            <el-dialog
-              :title="combination[activeIndex3]"
-              :visible.sync="dialogVisible3"
-              width="30%"
-              :before-close="handleClose">
-              <span>这是一段信息</span>
-              <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible3 = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible3 = false">确 定</el-button>
-              </span>
-            </el-dialog>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="imgCanvas" id="imgCanvas" @click="moveSelected()">
+    <typography></typography>
+    
+    <div class="imgCanvas" id="imgCanvas" @click="removeSelected()">
       <file-tool></file-tool>
       <paint-tool></paint-tool>
       <div class="paintCanvas" id='sketchpad' :style="style" :width="bgwidth+'px'">
-        <template-design :class="{'noshow':!activeTemplate}"></template-design>
-        <obj class="obj" v-for="(obj, index) in objs" :key="index" :obj="obj" @click.prevent.stop.native="selectObj($event, obj)" v-drag="{obj:obj, bgwidth:bgwidth}"></obj>
+        <!--<template-design :class="{'noshow':!activeTemplate}"></template-design>-->
+        <obj class="obj" v-for="(obj, index) in objs" :key="index" :obj="obj" 
+              @click.prevent.stop.native="selectObj($event, obj)" 
+              @contextmenu.prevent.stop.native="rightClick($event, obj)" 
+              v-drag="{obj:obj, bgwidth:bgwidth}">
+              
+        </obj>
+        <div id="objfun">
+                <ul>
+                  <li @click="liClick($event, 'replaceObj')"><span>替换当前元素</span></li>
+                  <li @click="liClick($event, 'replaceObjAll')"><span>替换当前元素所有相同元素</span></li>
+                  <li @click="liClick($event, 'colorMatch')">配色<span></span></li>
+                  <li @click="liClick($event, 'deleteObj')"><span>删除当前元素</span></li>
+                </ul>
+              </div>
       </div>
     </div>
     <div class="canvasTool">
@@ -97,52 +47,7 @@ export default frame
 </script>
 
 <style scoped>
-.frame .typography{
-  float: left;
-  border: 1px solid red;
-  height: 130px;
-  width: calc(100% - 220px);
-  margin: 0px 5px 10px 5px;
-}
-.frame .typography >>> .el-dialog__body .templateImg{
-  max-height: 200px;
-}
-.frame .typography >>> .el-dialog__body .active{
-  border:1px solid red;
-}
-.frame .typography .title{
-  font-size: 1.2em;
-  padding: .2em;  
-}
-.frame .typography .item ul{
-  list-style-type: none;
-  padding:0 0 0 0;
-}
-.frame .typography .item ul li{
-  height: 30px;
-  /*border: 1px solid green;*/
-  padding: 0;
-}
-.frame .typography .item ul li .fir-text{
-  position: relative;
-  display: inline-block;
-  top:-10px;
-}
-.frame .typography .item .sec-item{
-  display: inline-block;
-}
-.frame .typography .item .sec-item li{
-  float: left;
-  margin: 0 5px;
-  /*height: 30px;*/
-}
-.frame .typography .item .sec-item .active{
-  background: green;
-  color: white;
-}
-.frame .typography .item .text{
-  line-height: 30px;
-}
+
 .frame .canvasTool{
   float:left;
   width: 220px;
@@ -156,7 +61,7 @@ export default frame
   float: left;
   border: 1px solid red;
   width: 200px;
-  height: 800px;
+  height: 100%;
   /*width: 20%;*/
 }
 .frame .imgTool{
@@ -181,9 +86,6 @@ export default frame
   margin-left: 10px;
   position: relative;
   overflow:auto;
-
-  /*overflow: hidden;*/
-  /*_height:1%;*/
 }
 .frame .paintCanvas{
   overflow: hidden;
@@ -198,18 +100,33 @@ export default frame
   background: rgb(22, 22, 22);
   
 }
+.frame .paintCanvas #objfun{
+  position: relative;
+  display: none;
+  z-index: 100;
+  
+}
+.frame .paintCanvas #objfun ul{
+  list-style-type: none;
+  background: white;
+  width: 250px;
+}
+.frame .paintCanvas #objfun ul li{
+  padding: .2em;
+  border-bottom:1px solid black ;
+}
 .frame .paintCanvas .noshow{
   display: none;
 }
-.frame .obj{
+.frame >>> .obj{
   position: absolute;
   /*z-index: 22;*/
 }
-.frame .image{
+.frame >>> .image{
   width: 100%;
   height: 100%;
 }
-.frame .image img{
+.frame >>> .image img{
   width: 100%;
   height: 100%;
 }
@@ -225,8 +142,9 @@ export default frame
   display: none;
 }
 /*resize css */
-.frame .border{
-    border: #4a98be 1px solid;
+.frame >>> .border{
+    border: #4a98be 1px solid !important ;
+    z-index: 20;
     position: absolute;
     left: 0px;
     right: 0px;
@@ -235,11 +153,11 @@ export default frame
     display: none;
     /*z-index: 99;*/
 }
-.frame .active .direction , .active .border, .active .rotate{
+.frame >>> .active .direction , .frame >>> .active .border, .frame >>> .active .rotate{
   display: block;
 }
 
-.frame .direction {
+.frame >>> .direction {
   position: absolute;
   width: 5px;
   height: 5px;
@@ -249,15 +167,15 @@ export default frame
   /*z-index: 100;*/
 }
 
-.nw {left: -3px; top:-3px; z-index:110;cursor:nw-resize;}
-.w {left:-3px; top:50%; cursor:w-resize;}
-.ws {left: -3px; bottom: -3px; cursor:sw-resize;}
-.s {left:50%; bottom:-3px; cursor:s-resize;}
+.frame >>> .nw {left: -3px; top:-3px; cursor:nw-resize;}
+.frame >>> .w {left:-3px; top:50%; cursor:w-resize;}
+.frame >>> .ws {left: -3px; bottom: -3px; cursor:sw-resize;}
+.frame >>> .s {left:50%; bottom:-3px; cursor:s-resize;}
 
-.se {right:-3px; bottom:-3px; cursor:se-resize;}
-.e {right:-3px; top:50%; cursor:e-resize;}
-.ne {right:-3px; top:-3px; cursor:ne-resize;}
+.frame >>> .se {right:-3px; bottom:-3px; cursor:se-resize;}
+.frame >>> .e {right:-3px; top:50%; cursor:e-resize;}
+.frame >>> .ne {right:-3px; top:-3px; cursor:ne-resize;}
 
-.n {top:-3px; left:50%; cursor:n-resize;}
-.r {left:50%; top:50%; cursor:wait; background: black; z-index:120}
+.frame >>> .n {top:-3px; left:50%; cursor:n-resize;}
+.frame >>> .r {left:50%; top:50%; cursor:wait;}
 </style>

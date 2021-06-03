@@ -1,4 +1,5 @@
 <template>
+<!--文件工具栏-->
     <div class="fileTool">
         <ul>
             <li v-for="(item, index) in fileTool" :key="index" @click="handleClick(item)">
