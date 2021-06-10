@@ -15,8 +15,19 @@
                         <el-input type="password" v-model="loginForm.password" placeholder="请输入密码"/>
                         <el-input type="password" v-model="loginForm.repassword" placeholder="请再次输入密码"/>
                         <el-input v-model="loginForm.phonenumber" placeholder="请输入手机号"/>
-                        <el-input v-model="loginForm.verificationcode" placeholder="请输入验证码"/>
+                        <div class="code">
+                            <el-input v-model="loginForm.verificationcode" placeholder="请输入验证码"/>
+                            <el-button 
+                                @click="getCode"
+                                :disabled="disabled=!show"
+                            >
+                            <span v-show="show">获取验证码</span>
+                            <span v-show="!show" class="count">{{count}} s</span>
+                            </el-button>
+                        </div>
+                        <div class="regist">
                         <el-button @click="register">{{msg2}}</el-button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -32,6 +43,9 @@ export default {
         return{
             msg1:'砚海文舟工业图案设计服务平台',
             msg2:'注册',
+            show: true,
+            timer: 0,
+            count: 0,
             loginForm:{
                 username: '',
                 phonenumber:'',
@@ -42,6 +56,24 @@ export default {
         }
     },
     methods:{
+        getMessageCode(){
+            console.log(11111)
+            console.log(!this.timer)
+            if(!this.timer){
+                console.log(this.timer)
+                this.count = 60;
+                this.show = false;
+                this.timer = setInterval(() =>{
+                    if(this.count>0 && this.count<=60){
+                        this.count--;
+                    }else{
+                        this.show.true;
+                        clearInterval(this.timer);
+                        this.time = null;
+                    }
+                }, 1000);
+            }
+        },
         register(){
             //暂时先不处理手机短信验证码
             if(!this.loginForm.username ){
@@ -114,7 +146,7 @@ export default {
 .regisPage .data{
     /*border: 1px solid red;*/
     clear: both;
-    margin-top:100px;
+    margin-top:20px;           //100px
     flex: 1 1 auto;
     -webkit-flex: 1 1 auto; 
     text-align: center;
@@ -124,7 +156,7 @@ export default {
     position: relative;
     left: 25%;
     width: 50%;
-    height: 460px;
+    height: 400px;
     display: flex;
     background: white;
     border-radius: 10px;
@@ -157,7 +189,7 @@ export default {
     width: 0;
 }
 .regisPage .data >>> .el-input{
-    width: 200px;
+    width: 225px;
     margin: 0 auto;
     padding:5px 0;
     display: block;
@@ -166,8 +198,30 @@ export default {
     border-radius: 20px;
     text-indent: 10px;
 }
-.regisPage >>> .el-button{
-    margin-top: 5px ;
+.code{
+    position: relative;
 }
-
+.code .el-input{
+    width: 225px;
+}
+.code .el-button{
+    position: absolute;
+    top: 17.5px;
+    right: 50px;
+    color: #50E5C5;
+    border: none;
+    outline: none;
+}
+.regist .el-button{
+    width: 225px;
+    height: 35px;
+    margin: 0 auto;
+    padding: 5px 0;
+    display: block;
+    background: #50E5C5;
+    margin-top: 5px;
+    color: white;
+    border-radius: 20px;
+    letter-spacing: .15em;
+}
 </style>
