@@ -14,6 +14,7 @@ Vue.prototype.$http = axios
 Vue.use(ElementUI)
 Vue.use(componentObj)
 
+// 不打印项目启动的详细提示信息
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
