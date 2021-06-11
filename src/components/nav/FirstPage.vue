@@ -97,6 +97,7 @@
     </footer>
     </div>
 </template>
+
 <script>
 import SearchBox from '../common/SearchBox.vue'
 export default {
@@ -255,6 +256,7 @@ export default {
     }
 }
 </script>
+
 <style scoped>
 footer{
     background-color: #566262;
@@ -388,7 +390,7 @@ background-color: #d3dce6;
 .myslide{
     width: 100%;
     background-image: url(../../assets/images/bg1.png);
-    background-size: 100%;
+    background-size: 150%;                                    //100%
     background-repeat: no-repeat;
     background-position: center center;
 }
@@ -461,6 +463,7 @@ background-color: #d3dce6;
     font-size: 1em;
     font-weight: normal;
     margin-bottom: 0;
+    color: black;
 }
 .img_intro ul li img{
     width: 300px;
