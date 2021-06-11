@@ -7,8 +7,8 @@
         </section>
         <div class="data">
             <div class='tab'>
-                <img class="info" src="@/assets/images/login/head.png">
-                <div class="info">
+                <img class="info1" src="@/assets/images/login/head.png">
+                <div class="info2">
                     <h1>{{msg1}}</h1>
                     <div class="photo_regis">
                         <el-input v-model="loginForm.username" placeholder="请输入用户名"/>
@@ -21,13 +21,22 @@
                                 @click="getCode"
                                 :disabled="disabled=!show"
                             >
-                            <span v-show="show">获取验证码</span>
+                            <span v-show="show">发送验证码</span>
                             <span v-show="!show" class="count">{{count}} s</span>
                             </el-button>
                         </div>
-                        <div class="regist">
-                        <el-button @click="register">{{msg2}}</el-button>
+                        <div class="agreement">
+                            <input type="checkbox" v-model="agree" value="agreed"/>
+                            <label for="agreed">已同意</label>
+                            <el-button @click="text">{{msg2}}</el-button>
                         </div>
+                        <div class="regist">
+                            <el-button @click="register">{{msg3}}</el-button>
+                        </div>
+                        <div class="login">
+                            <span>{{msg4}}</span>
+                            <span><el-button @click="login">登录</el-button></span>
+                        </div>                        
                     </div>
                 </div>
             </div>
@@ -42,10 +51,13 @@ export default {
     data(){
         return{
             msg1:'砚海文舟工业图案设计服务平台',
-            msg2:'注册',
+            msg2:'《砚海文舟用户协议》',
+            msg3:'注册',
+            msg4:'我已经注册，现在就',
             show: true,
-            timer: 0,
-            count: 0,
+            timer: null,
+            count: "",
+            agree: "",
             loginForm:{
                 username: '',
                 phonenumber:'',
@@ -56,66 +68,100 @@ export default {
         }
     },
     methods:{
-        getMessageCode(){
-            console.log(11111)
-            console.log(!this.timer)
-            if(!this.timer){
-                console.log(this.timer)
-                this.count = 60;
+        getCode(){
+            // 验证手机号
+            if (this.checkPhone() == false) {
+                return false;
+            } else {
+                this.validateTime();
+                this.$http({
+                    method:'get',
+                    url:"http://localhost:8081/api/home/getCode",
+                    params:{
+                        telephone:this.loginForm.phonenumber.trim()
+                    }
+                  }).then((res)=>{
+                      console.log('res is ', res);
+                      if(res.status==200){
+                          this.$message.success('验证码已发送');
+                      }                  
+                });
+            }
+        },
+        validateTime(){
+            const TIME_COUNT = 60; 
+            if (!this.timer) {
+                this.count = TIME_COUNT;
                 this.show = false;
-                this.timer = setInterval(() =>{
-                    if(this.count>0 && this.count<=60){
-                        this.count--;
-                    }else{
-                        this.show.true;
+                this.timer = setInterval(() => {
+                    if (this.count == 0) {
+                        this.show = true;
                         clearInterval(this.timer);
-                        this.time = null;
+                        this.timer = null;
+                    } else {
+                        this.count--;
                     }
                 }, 1000);
             }
         },
+        checkPhone(){
+            let phonenumber = this.loginForm.phonenumber;
+            if (!/^1[3456789]\d{9}$/.test(phonenumber)) {
+                this.$message.error("请输入正确的手机号");
+                return false;
+            }
+            return true;
+        },
+        text(){
+            //暂时不处理用户协议
+        },
         register(){
             //暂时先不处理手机短信验证码
             if(!this.loginForm.username ){
-                alert('用户名不能为空');
+                this.$message.warning('用户名不能为空');
             }else if(!this.loginForm.password || !this.loginForm.repassword){
-                alert('密码不能为空');
+                this.$message.warning('密码不能为空');
             }else if(this.loginForm.password!==this.loginForm.repassword){
-                alert('两次密码不一致');
-            }else if(!this.loginForm.phonenumber || this.loginForm.phonenumber.length!==11){
-                alert('手机号不正确');
+                this.$message.error('两次密码不一致');
+            }else if(!this.loginForm.phonenumber){
+                this.$message.warning('手机号不能为空');
             }else if(!this.loginForm.verificationcode){
-                alert('验证码为空');
-            }else if(this.loginForm.verificationcode!='0000'){
-                alert('验证码错误')
-            }else{
+                this.$message.warning('验证码为空');
+            }else if(!this.agree){
+                this.$message.warning('请阅读用户协议并勾选同意');
+            }
+            else{
                 this.$http({
                     method:'post',
-                    url:"http://localhost:8080/api/login/add",
+                    url:"http://localhost:8081/api/home/register/mobile",
                     params:{
-                        telephone:this.loginForm.phonenumber.trim(),
-                        username:this.loginForm.username.trim(),
-                        password: this.loginForm.password.trim()
+                        Mobile:this.loginForm.phonenumber.trim(),
+                        username: this.loginForm.username.trim(),
+                        password: this.loginForm.password.trim(),
+                        validationCode: this.loginForm.verificationcode.trim()
                     }
                   }).then((res)=>{
                       //console.log('res is ', res.status);
                       console.log('res is ', res);
                       if(res.status===200){
-                          if(res.data.rescode==0){
+                          if(res.data.rspCode!=2000){
                               //该手机号已被注册
-                                alert('该手机号已注册');
+                                this.$message.error(res.data.rspMsg);
                           }else{
                               //新注册
-                              alert('注册成功');
-                              this.$store.commit('setToken', res.data.username || res.data.telephone);
+                              this.$message.success('注册成功');
+                              this.$store.commit('setToken', res.headers.token);
                               this.$router.push('/');
                           }
                       }else{
-                          console.log('regis fail')
-                      }
-                    
+                          console.log('regis fail');
+                          this.$message.error('注册失败');
+                      } 
                 });
             }
+        },
+        login(){
+            this.$router.push('/login');
         }
     }
 }
@@ -146,7 +192,7 @@ export default {
 .regisPage .data{
     /*border: 1px solid red;*/
     clear: both;
-    margin-top:20px;           //100px
+    margin-top:20px;           /*100px*/
     flex: 1 1 auto;
     -webkit-flex: 1 1 auto; 
     text-align: center;
@@ -161,8 +207,11 @@ export default {
     background: white;
     border-radius: 10px;
 }
-.regisPage .data .tab .info{
+.regisPage .data .tab .info1{
     margin-top: 50px;
+}
+.regisPage .data .tab .info2{
+    margin-top: 20px;
 }
 .regisPage section img{
     position: relative;
@@ -209,8 +258,12 @@ export default {
     top: 17.5px;
     right: 50px;
     color: #50E5C5;
+    background: none;
     border: none;
     outline: none;
+}
+.count{
+    color: gray;
 }
 .regist .el-button{
     width: 225px;
@@ -223,5 +276,30 @@ export default {
     color: white;
     border-radius: 20px;
     letter-spacing: .15em;
+}
+.regist .el-button:hover{
+    background: #99ffcc;
+}
+.agreement{
+    font-size: 0.3em;
+    display: block;
+}
+.agreement .el-button{
+    font-size: 0.3em;
+    color: #50E5C5;
+    background: none;
+    border: none;
+    outline: none;
+}
+.login{
+    font-size: 0.3em;
+    display: block;
+}
+.login .el-button{
+    font-size: 0.3em;
+    color: #50E5C5;
+    background: none;
+    border: none;
+    outline: none;
 }
 </style>
