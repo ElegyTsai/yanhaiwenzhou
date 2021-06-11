@@ -30,9 +30,7 @@
                             <label for="agreed">已同意</label>
                             <el-button @click="text">{{msg2}}</el-button>
                         </div>
-                        <div class="regist">
-                            <el-button @click="register">{{msg3}}</el-button>
-                        </div>
+                        <el-button @click="register" class="regist">{{msg3}}</el-button>
                         <div class="login">
                             <span>{{msg4}}</span>
                             <span><el-button @click="login">登录</el-button></span>
@@ -78,7 +76,7 @@ export default {
                     method:'get',
                     url:"http://localhost:8081/api/home/getCode",
                     params:{
-                        telephone:this.loginForm.phonenumber.trim()
+                        mobile:this.loginForm.phonenumber.trim()
                     }
                   }).then((res)=>{
                       console.log('res is ', res);
@@ -135,7 +133,7 @@ export default {
                     method:'post',
                     url:"http://localhost:8081/api/home/register/mobile",
                     params:{
-                        Mobile:this.loginForm.phonenumber.trim(),
+                        mobile:this.loginForm.phonenumber.trim(),
                         username: this.loginForm.username.trim(),
                         password: this.loginForm.password.trim(),
                         validationCode: this.loginForm.verificationcode.trim()
