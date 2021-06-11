@@ -142,14 +142,14 @@ export default {
                       //console.log('res is ', res.status);
                       console.log('res is ', res);
                       if(res.status===200){
-                          if(res.data.rspCode!=2000){
-                              //该手机号已被注册
-                                this.$message.error(res.data.rspMsg);
-                          }else{
+                          if(res.data.rspCode==="2000"){
                               //新注册
                               this.$message.success('注册成功');
                               this.$store.commit('setToken', res.headers.token);
                               this.$router.push('/');
+                          }else{
+                              //意外情况
+                              this.$message.error(res.data.rspMsg);
                           }
                       }else{
                           console.log('regis fail');
@@ -263,7 +263,7 @@ export default {
 .count{
     color: gray;
 }
-.regist .el-button{
+.regist{
     width: 225px;
     height: 35px;
     margin: 0 auto;
@@ -275,7 +275,7 @@ export default {
     border-radius: 20px;
     letter-spacing: .15em;
 }
-.regist .el-button:hover{
+.regist:hover{
     background: #99ffcc;
 }
 .agreement{
@@ -283,7 +283,6 @@ export default {
     display: block;
 }
 .agreement .el-button{
-    font-size: 0.3em;
     color: #50E5C5;
     background: none;
     border: none;
@@ -294,7 +293,6 @@ export default {
     display: block;
 }
 .login .el-button{
-    font-size: 0.3em;
     color: #50E5C5;
     background: none;
     border: none;
